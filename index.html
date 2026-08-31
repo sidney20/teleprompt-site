@@ -62,11 +62,11 @@
   .nav { display: flex; align-items: center; gap: 14px; height: 64px; }
   .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: .3px; }
   .brand .mark {
-    width: 34px; height: 34px; border-radius: 10px; flex: none;
-    background: linear-gradient(135deg, var(--p1), var(--p2));
-    display: grid; place-items: center; font-size: 17px;
+    width: 34px; height: 34px; border-radius: 10px; flex: none; overflow: hidden;
+    display: grid; place-items: center;
     box-shadow: 0 4px 16px rgba(99,102,241,.45);
   }
+  .brand .mark img { display: block; width: 34px; height: 34px; }
   .nav-links { display: flex; gap: 22px; margin-left: auto; align-items: center; }
   .nav-links a { color: var(--muted); text-decoration: none; font-size: .92rem; font-weight: 600; }
   .nav-links a:hover { color: var(--ink); }
@@ -115,14 +115,62 @@
   .hero-stats .s b { display: block; font-size: 1.5rem; font-weight: 900; color: var(--ink); }
   .hero-stats .s span { font-size: .82rem; color: var(--muted); }
 
-  /* app icon */
+  /* phone mockup */
   .phone-stage { display: flex; justify-content: center; perspective: 1200px; }
-  .app-logo {
+  .phone {
+    width: 276px; height: 570px; border-radius: 40px; position: relative;
+    background: linear-gradient(160deg, #1a1633, #0c0a1e);
+    border: 1px solid rgba(167,139,250,.28);
+    box-shadow: 0 30px 80px rgba(0,0,0,.6), 0 0 80px rgba(139,92,246,.25);
+    padding: 12px;
     animation: float 7s ease-in-out infinite;
-    filter: drop-shadow(0 24px 60px rgba(139,92,246,.45));
   }
-  .app-logo img { display: block; width: 240px; height: 240px; border-radius: 52px; }
   @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+  .phone .screen {
+    width: 100%; height: 100%; border-radius: 30px; overflow: hidden; position: relative;
+    background:
+      radial-gradient(160px 90px at 50% 0%, rgba(99,102,241,.25), transparent 70%),
+      #0b0a18;
+  }
+  .phone .notch { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 90px; height: 24px; background: #000; border-radius: 16px; z-index: 10; }
+  .pv-cam { position: absolute; top: 0; left: 0; right: 0; height: 300px; background: linear-gradient(180deg, #1c2340, #141a33); z-index: 1; }
+  .pv-cam::after { content: ""; position: absolute; top: 40px; left: 50%; transform: translateX(-50%); width: 22px; height: 4px; border-radius: 4px; background: rgba(255,255,255,.25); }
+  .pv-chip-t {
+    position: absolute; top: 60px; left: 50%; transform: translateX(-50%); z-index: 5;
+    font-size: .62rem; color: #c4b5fd; background: rgba(139,92,246,.2); border: 1px solid rgba(139,92,246,.35);
+    padding: 4px 9px; border-radius: 999px; white-space: nowrap;
+  }
+  .pv-glass { position: absolute; inset: 212px 0 0; z-index: 2; background: rgba(139,92,246,.08); }
+  .pv-link { position: absolute; top: 238px; left: 16px; right: 16px; z-index: 6; display: flex; align-items: center; }
+  .pv-link .ln {
+    flex: 1; height: 9px; border-radius: 6px; background: rgba(255,255,255,.18);
+    position: relative; overflow: hidden;
+  }
+  .pv-link .ln::after { content: ""; position: absolute; inset: 0; width: 34%; border-radius: 6px; background: linear-gradient(90deg, var(--p1), var(--p2)); animation: linkPulse 2.6s ease-in-out infinite; }
+  @keyframes linkPulse { 0%,100% { width: 30%; opacity: .8; } 50% { width: 62%; opacity: 1; } }
+  .pv-link .lp { width: 34px; height: 12px; border-radius: 6px; margin-left: 8px; background: linear-gradient(135deg, var(--p1), var(--p2)); box-shadow: 0 3px 10px rgba(99,102,241,.5); }
+  .pv-text {
+    position: absolute; top: 268px; bottom: 84px; left: 14px; right: 14px; z-index: 6;
+    overflow: hidden; -webkit-mask-image: linear-gradient(180deg, transparent, #000 14%, #000 86%, transparent);
+    mask-image: linear-gradient(180deg, transparent, #000 14%, #000 86%, transparent);
+  }
+  .pv-scroll { animation: scrollUp 13s linear infinite; }
+  .pv-scroll > div { padding: 7px 0; }
+  .pv-line { height: 7px; border-radius: 6px; background: rgba(255,255,255,.34); margin-bottom: 12px; }
+  .pv-line.short { width: 68%; }
+  .pv-line.hl { background: linear-gradient(90deg, var(--p1), var(--p2)); }
+  @keyframes scrollUp { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+  .pv-ui {
+    position: absolute; left: 14px; right: 14px; bottom: 18px; z-index: 7;
+    background: rgba(20,18,40,.85); border: 1px solid var(--line); border-radius: 18px; padding: 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .pv-ui .rec { width: 14px; height: 14px; border-radius: 50%; background: #f43f5e; box-shadow: 0 0 12px #f43f5e; animation: recPulse 1.6s ease-in-out infinite; }
+  @keyframes recPulse { 50% { opacity: .5; } }
+  .pv-ui .bar { flex: 1; height: 8px; border-radius: 6px; background: rgba(255,255,255,.14); position: relative; overflow: hidden; }
+  .pv-ui .bar::after { content: ""; position: absolute; inset: 0; width: 45%; border-radius: 6px; background: linear-gradient(90deg, #a5b4fc, #e879f9); animation: linkPulse 4s ease-in-out infinite; }
+  .pv-ui .pl { font-size: .6rem; color: #c4b5fd; font-weight: 700; width: 26px; text-align: center; }
+  .pv-ui .pl::before { content: "►"; }
 
   /* sections common */
   section { padding: 78px 0; }
@@ -247,8 +295,7 @@
     .hero p.lead { margin-left: auto; margin-right: auto; }
     .cta-row { justify-content: center; }
     .hero-stats { justify-content: center; }
-    .phone-stage { order: -1; margin-bottom: 34px; transform: scale(.9); }
-    .app-logo img { width: 200px; height: 200px; }
+    .phone-stage { order: -1; margin-bottom: 30px; transform: scale(.92); }
     .pillars, .steps { grid-template-columns: 1fr; }
   }
 </style>
@@ -259,7 +306,8 @@
 
 <header>
   <div class="wrap nav">
-    <div class="brand"><div class="mark">🎬</div> TelePrompT</div>
+    <div class="brand"><div class="mark"><img src="app-icon.svg" alt="" width="34" height="34"></div> TelePrompT</div>
+
     <nav class="nav-links">
       <a href="#recursos">Recursos</a>
       <a href="#como-funciona">Como funciona</a>
@@ -290,7 +338,28 @@
     </div>
 
     <div class="phone-stage">
-      <div class="app-logo"><img src="app-icon.svg" alt="TelePrompT" width="240" height="240"></div>
+      <div class="phone">
+        <div class="screen">
+          <div class="notch"></div>
+          <div class="pv-cam"></div>
+          <span class="pv-chip-t">🎬 Gravando roteiro 03</span>
+          <div class="pv-glass"></div>
+          <div class="pv-link"><span class="ln"></span><span class="lp"></span></div>
+          <div class="pv-text">
+            <div class="pv-scroll">
+              <div>
+                <div class="pv-line"></div><div class="pv-line short"></div><div class="pv-line"></div><div class="pv-line short"></div>
+                <div class="pv-line hl"></div><div class="pv-line"></div><div class="pv-line short"></div><div class="pv-line"></div>
+              </div>
+              <div>
+                <div class="pv-line"></div><div class="pv-line short"></div><div class="pv-line"></div><div class="pv-line short"></div>
+                <div class="pv-line hl"></div><div class="pv-line"></div><div class="pv-line short"></div><div class="pv-line"></div>
+              </div>
+            </div>
+          </div>
+          <div class="pv-ui"><span class="rec"></span><span class="bar"></span><span class="pl"></span></div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
