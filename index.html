@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TelePrompT — Seu teleprompter no bolso</title>
+<meta name="description" content="TelePrompT: leia seus roteiros do Google Docs enquanto grava vídeo direto no celular. Grátis, funciona offline e instala como app. Escolha a pasta e o Google Fotos faz o backup.">
+<meta name="theme-color" content="#0f0c29">
+<meta property="og:title" content="TelePrompT — Seu teleprompter no bolso">
+<meta property="og:description" content="Cole o link do Google Docs, ajuste a velocidade e grave vídeos com texto na tela. Grátis, offline, privado. Instala como app no seu celular.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://sidney20.github.io/teleprompt-site/">
+<meta property="og:image" content="https://sidney20.github.io/teleprompt/icons/icon-512.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236366f1'/%3E%3Cstop offset='1' stop-color='%238b5cf6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Crect x='14' y='24' width='36' height='22' rx='4' fill='none' stroke='white' stroke-width='3'/%3E%3Crect x='10' y='28' width='44' height='6' rx='3' fill='white'/%3E%3Cpath d='M14 24 L22 18' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #070610;
+    --panel: #0f0c29;
+    --ink: #eef0fa;
+    --muted: #9aa0c0;
+    --p1: #6366f1;
+    --p2: #8b5cf6;
+    --p3: #a78bfa;
+    --glass: rgba(255,255,255,.045);
+    --line: rgba(255,255,255,.09);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  .bg-fx {
+    position: fixed; inset: 0; z-index: -2;
+    background:
+      radial-gradient(1200px 620px at 85% -10%, rgba(139,92,246,.22), transparent 60%),
+      radial-gradient(900px 500px at -10% 15%, rgba(99,102,241,.18), transparent 55%),
+      linear-gradient(180deg, #0b0919, #070610 40%);
+  }
+  .bg-grid {
+    position: fixed; inset: 0; z-index: -1; opacity: .5; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(167,139,250,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(167,139,250,.05) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 75%);
+  }
+
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 22px; }
+
+  /* ---------- nav ---------- */
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(7,6,16,.72);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav { display: flex; align-items: center; gap: 14px; height: 64px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: .3px; }
+  .brand .mark {
+    width: 34px; height: 34px; border-radius: 10px; flex: none;
+    background: linear-gradient(135deg, var(--p1), var(--p2));
+    display: grid; place-items: center; font-size: 17px;
+    box-shadow: 0 4px 16px rgba(99,102,241,.45);
+  }
+  .nav-links { display: flex; gap: 22px; margin-left: auto; align-items: center; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: .92rem; font-weight: 600; }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-cta {
+    text-decoration: none; color: #fff; font-weight: 700; font-size: .86rem;
+    background: linear-gradient(135deg, var(--p1), var(--p2));
+    padding: 9px 16px; border-radius: 999px;
+    box-shadow: 0 6px 20px rgba(99,102,241,.4);
+    white-space: nowrap;
+  }
+  @media (max-width: 640px) { .nav-links a:not(.nav-cta) { display: none; } }
+
+  /* ---------- hero ---------- */
+  .hero { padding: 64px 0 40px; }
+  .hero-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 40px; align-items: center; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: .8rem; font-weight: 700; letter-spacing: .4px; color: var(--p3);
+    border: 1px solid rgba(167,139,250,.3); background: rgba(139,92,246,.1);
+    padding: 6px 12px; border-radius: 999px; margin-bottom: 20px;
+  }
+  .eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #34d399; box-shadow: 0 0 10px #34d399; }
+  h1 { font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.12; font-weight: 900; letter-spacing: -.5px; }
+  h1 .grad { background: linear-gradient(90deg, #a5b4fc, #c4b5fd, #f0abfc); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p.lead { color: var(--muted); font-size: 1.12rem; margin: 22px 0 30px; max-width: 540px; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    color: #fff; text-decoration: none; font-weight: 800; font-size: 1rem;
+    padding: 15px 26px; border-radius: 15px; border: none; cursor: pointer;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--p1), var(--p2));
+    box-shadow: 0 10px 30px rgba(99,102,241,.45), inset 0 1px 0 rgba(255,255,255,.2);
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(99,102,241,.55); }
+  .btn-primary:active { transform: translateY(0) scale(.98); }
+  .btn-ghost {
+    background: var(--glass); border: 1px solid var(--line); color: var(--ink);
+    backdrop-filter: blur(8px);
+  }
+  .btn-ghost:hover { border-color: rgba(167,139,250,.4); }
+  .hero-note { margin-top: 18px; font-size: .85rem; color: var(--muted); }
+  .hero-stats { display: flex; flex-wrap: wrap; gap: 26px; margin-top: 38px; }
+  .hero-stats .s b { display: block; font-size: 1.5rem; font-weight: 900; color: var(--ink); }
+  .hero-stats .s span { font-size: .82rem; color: var(--muted); }
+
+  /* phone mockup */
+  .phone-stage { display: flex; justify-content: center; perspective: 1200px; }
+  .phone {
+    width: 276px; height: 570px; border-radius: 40px; position: relative;
+    background: linear-gradient(160deg, #1a1633, #0c0a1e);
+    border: 1px solid rgba(167,139,250,.28);
+    box-shadow: 0 30px 80px rgba(0,0,0,.6), 0 0 80px rgba(139,92,246,.25);
+    padding: 12px;
+    animation: float 7s ease-in-out infinite;
+  }
+  @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+  .phone .screen {
+    width: 100%; height: 100%; border-radius: 30px; overflow: hidden; position: relative;
+    background:
+      radial-gradient(160px 90px at 50% 0%, rgba(99,102,241,.25), transparent 70%),
+      #0b0a18;
+  }
+  .phone .notch { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 90px; height: 24px; background: #000; border-radius: 16px; z-index: 10; }
+  .pv-cam { position: absolute; top: 0; left: 0; right: 0; height: 300px; background: linear-gradient(180deg, #1c2340, #141a33); z-index: 1; }
+  .pv-cam::after { content: ""; position: absolute; top: 40px; left: 50%; transform: translateX(-50%); width: 22px; height: 4px; border-radius: 4px; background: rgba(255,255,255,.25); }
+  .pv-chip-t {
+    position: absolute; top: 60px; left: 50%; transform: translateX(-50%); z-index: 5;
+    font-size: .62rem; color: #c4b5fd; background: rgba(139,92,246,.2); border: 1px solid rgba(139,92,246,.35);
+    padding: 4px 9px; border-radius: 999px; white-space: nowrap;
+  }
+  .pv-glass { position: absolute; inset: 212px 0 0; z-index: 2; background: rgba(139,92,246,.08); }
+  .pv-link { position: absolute; top: 238px; left: 16px; right: 16px; z-index: 6; display: flex; align-items: center; }
+  .pv-link .ln {
+    flex: 1; height: 9px; border-radius: 6px; background: rgba(255,255,255,.18);
+    position: relative; overflow: hidden;
+  }
+  .pv-link .ln::after { content: ""; position: absolute; inset: 0; width: 34%; border-radius: 6px; background: linear-gradient(90deg, var(--p1), var(--p2)); animation: linkPulse 2.6s ease-in-out infinite; }
+  @keyframes linkPulse { 0%,100% { width: 30%; opacity: .8; } 50% { width: 62%; opacity: 1; } }
+  .pv-link .lp { width: 34px; height: 12px; border-radius: 6px; margin-left: 8px; background: linear-gradient(135deg, var(--p1), var(--p2)); box-shadow: 0 3px 10px rgba(99,102,241,.5); }
+  .pv-text {
+    position: absolute; top: 268px; bottom: 84px; left: 14px; right: 14px; z-index: 6;
+    overflow: hidden; -webkit-mask-image: linear-gradient(180deg, transparent, #000 14%, #000 86%, transparent);
+    mask-image: linear-gradient(180deg, transparent, #000 14%, #000 86%, transparent);
+  }
+  .pv-scroll { animation: scrollUp 13s linear infinite; }
+  .pv-scroll > div { padding: 7px 0; }
+  .pv-line { height: 7px; border-radius: 6px; background: rgba(255,255,255,.34); margin-bottom: 12px; }
+  .pv-line.short { width: 68%; }
+  .pv-line.hl { background: linear-gradient(90deg, var(--p1), var(--p2)); }
+  @keyframes scrollUp { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+  .pv-ui {
+    position: absolute; left: 14px; right: 14px; bottom: 18px; z-index: 7;
+    background: rgba(20,18,40,.85); border: 1px solid var(--line); border-radius: 18px; padding: 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .pv-ui .rec { width: 14px; height: 14px; border-radius: 50%; background: #f43f5e; box-shadow: 0 0 12px #f43f5e; animation: recPulse 1.6s ease-in-out infinite; }
+  @keyframes recPulse { 50% { opacity: .5; } }
+  .pv-ui .bar { flex: 1; height: 8px; border-radius: 6px; background: rgba(255,255,255,.14); position: relative; overflow: hidden; }
+  .pv-ui .bar::after { content: ""; position: absolute; inset: 0; width: 45%; border-radius: 6px; background: linear-gradient(90deg, #a5b4fc, #e879f9); animation: linkPulse 4s ease-in-out infinite; }
+  .pv-ui .pl { font-size: .6rem; color: #c4b5fd; font-weight: 700; width: 26px; text-align: center; }
+  .pv-ui .pl::before { content: "►"; }
+
+  /* sections common */
+  section { padding: 78px 0; }
+  .sec-head { max-width: 640px; margin: 0 auto 46px; text-align: center; }
+  .sec-head .kicker {
+    font-size: .8rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--p3);
+    margin-bottom: 12px;
+  }
+  .sec-head h2 { font-size: clamp(1.5rem, 3.4vw, 2.2rem); font-weight: 900; letter-spacing: -.4px; line-height: 1.2; }
+  .sec-head p { color: var(--muted); margin-top: 14px; font-size: 1.02rem; }
+
+  /* pillars */
+  .pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .pillar {
+    background: var(--glass); border: 1px solid var(--line); border-radius: 22px; padding: 26px;
+    backdrop-filter: blur(10px); position: relative; overflow: hidden;
+  }
+  .pillar::before { content: ""; position: absolute; top: -40px; right: -40px; width: 120px; height: 120px; border-radius: 50%; background: radial-gradient(circle, rgba(139,92,246,.18), transparent 70%); }
+  .pillar .ic {
+    width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; font-size: 22px;
+    background: linear-gradient(135deg, var(--p1), var(--p2)); margin-bottom: 16px;
+    box-shadow: 0 6px 18px rgba(99,102,241,.4);
+  }
+  .pillar h3 { font-size: 1.08rem; font-weight: 800; margin-bottom: 8px; }
+  .pillar p { color: var(--muted); font-size: .92rem; }
+
+  /* features */
+  .feats { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
+  .feat {
+    background: var(--glass); border: 1px solid var(--line); border-radius: 22px; padding: 24px;
+    transition: transform .2s ease, border-color .2s ease;
+  }
+  .feat:hover { transform: translateY(-4px); border-color: rgba(167,139,250,.45); }
+  .feat .fi {
+    width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; font-size: 20px;
+    background: rgba(139,92,246,.14); border: 1px solid rgba(139,92,246,.3); margin-bottom: 14px;
+  }
+  .feat h3 { font-size: 1rem; font-weight: 800; margin-bottom: 6px; }
+  .feat p { color: var(--muted); font-size: .88rem; }
+
+  /* steps */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; counter-reset: step; }
+  .step {
+    background: var(--glass); border: 1px solid var(--line); border-radius: 22px; padding: 26px; position: relative;
+  }
+  .step .num {
+    counter-increment: step; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center;
+    font-weight: 900; font-size: 1.05rem; color: #fff; background: linear-gradient(135deg, var(--p1), var(--p2));
+    margin-bottom: 16px; box-shadow: 0 6px 16px rgba(99,102,241,.4);
+  }
+  .step h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: 8px; }
+  .step p { color: var(--muted); font-size: .92rem; }
+
+  /* install section + tabs */
+  .install-panel {
+    background: linear-gradient(150deg, rgba(99,102,241,.12), rgba(139,92,246,.06));
+    border: 1px solid rgba(167,139,250,.28); border-radius: 26px; padding: 34px;
+    max-width: 860px; margin: 0 auto; backdrop-filter: blur(10px);
+  }
+  .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 26px; }
+  .tab {
+    border: 1px solid var(--line); background: var(--glass); color: var(--muted);
+    padding: 10px 18px; border-radius: 999px; font-weight: 700; font-size: .9rem; cursor: pointer;
+    transition: all .18s ease;
+  }
+  .tab.active { color: #fff; background: linear-gradient(135deg, var(--p1), var(--p2)); border-color: transparent; box-shadow: 0 6px 18px rgba(99,102,241,.4); }
+  .tabpane { display: none; }
+  .tabpane.active { display: block; animation: fadeIn .3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .tabpane ol { margin: 0 0 16px 20px; display: grid; gap: 10px; }
+  .tabpane li { font-size: .96rem; color: var(--ink); }
+  .tabpane li b { color: var(--p3); }
+  .note-box {
+    background: rgba(251,191,36,.08); border: 1px solid rgba(251,191,36,.25); color: #fcd34d;
+    border-radius: 12px; padding: 11px 14px; font-size: .85rem; margin-top: 6px;
+  }
+
+  /* benefits strip */
+  .bene { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; }
+  .bene > div { text-align: center; padding: 8px 6px; }
+  .bene .bi { font-size: 28px; margin-bottom: 6px; }
+  .bene b { display: block; font-size: .98rem; font-weight: 800; }
+  .bene span { color: var(--muted); font-size: .84rem; }
+
+  /* faq */
+  .faq { max-width: 720px; margin: 0 auto; }
+  details {
+    background: var(--glass); border: 1px solid var(--line); border-radius: 16px; padding: 0;
+    margin-bottom: 12px; overflow: hidden;
+  }
+  summary {
+    list-style: none; cursor: pointer; font-weight: 700; font-size: .98rem;
+    padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; font-size: 1.3rem; color: var(--p3); font-weight: 800; transition: transform .2s ease; }
+  details[open] summary::after { transform: rotate(45deg); }
+  details .body { padding: 0 20px 18px; color: var(--muted); font-size: .92rem; }
+
+  /* final cta */
+  .final-cta { text-align: center; }
+  .final-card {
+    background: linear-gradient(160deg, rgba(99,102,241,.18), rgba(139,92,246,.08));
+    border: 1px solid rgba(167,139,250,.3); border-radius: 30px; padding: 56px 24px; position: relative; overflow: hidden;
+  }
+  .final-card::before { content: ""; position: absolute; inset: 0; background: radial-gradient(600px 200px at 50% 0%, rgba(139,92,246,.3), transparent 70%); }
+  .final-card > * { position: relative; }
+  .final-card h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 900; letter-spacing: -.4px; margin-bottom: 14px; }
+  .final-card p { color: var(--muted); max-width: 520px; margin: 0 auto 30px; }
+
+  footer { border-top: 1px solid var(--line); padding: 30px 0 40px; }
+  .foot { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; }
+  .foot .brand { font-size: .95rem; }
+  .foot p { color: var(--muted); font-size: .84rem; }
+
+  /* reveal */
+  .rv { opacity: 0; transform: translateY(26px); transition: opacity .6s ease, transform .6s ease; }
+  .rv.in { opacity: 1; transform: none; }
+
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; text-align: center; }
+    .hero p.lead { margin-left: auto; margin-right: auto; }
+    .cta-row { justify-content: center; }
+    .hero-stats { justify-content: center; }
+    .phone-stage { order: -1; margin-bottom: 30px; transform: scale(.92); }
+    .pillars, .steps { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-fx"></div>
+<div class="bg-grid"></div>
+
+<header>
+  <div class="wrap nav">
+    <div class="brand"><div class="mark">🎬</div> TelePrompT</div>
+    <nav class="nav-links">
+      <a href="#recursos">Recursos</a>
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#instalar">Instalar</a>
+      <a href="#faq">Dúvidas</a>
+      <a class="nav-cta" href="https://sidney20.github.io/teleprompt/">★ Instalar app</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">Grátis &middot; Funciona offline &middot; Instala como app</span>
+      <h1>Seu <span class="grad">teleprompter</span> no bolso, pronto pra gravar.</h1>
+      <p class="lead">Cole o link do seu roteiro no Google Docs, ajuste a velocidade e grave vídeos olhando para a câmera — com o texto rolando na tela, como um apresentador profissional de TV.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://sidney20.github.io/teleprompt/">★ Instalar no celular</a>
+        <a class="btn btn-ghost" href="#como-funciona">Ver como funciona</a>
+      </div>
+      <p class="hero-note">No Android, o próprio navegador oferece a instalação ao abrir o app. No iPhone, use Compartilhar → Adicionar à Tela de Início.</p>
+      <div class="hero-stats">
+        <div class="s"><b>100%</b><span>grátis, sem limites</span></div>
+        <div class="s"><b>Offline</b><span>funciona sem internet</span></div>
+        <div class="s"><b>Privado</b><span>seus roteiros ficam no aparelho</span></div>
+      </div>
+    </div>
+
+    <div class="phone-stage">
+      <div class="phone">
+        <div class="screen">
+          <div class="notch"></div>
+          <div class="pv-cam"></div>
+          <span class="pv-chip-t">🎬 Gravando roteiro 03</span>
+          <div class="pv-glass"></div>
+          <div class="pv-link"><span class="ln"></span><span class="lp"></span></div>
+          <div class="pv-text">
+            <div class="pv-scroll">
+              <div>
+                <div class="pv-line"></div><div class="pv-line short"></div><div class="pv-line"></div><div class="pv-line short"></div>
+                <div class="pv-line hl"></div><div class="pv-line"></div><div class="pv-line short"></div><div class="pv-line"></div>
+              </div>
+              <div>
+                <div class="pv-line"></div><div class="pv-line short"></div><div class="pv-line"></div><div class="pv-line short"></div>
+                <div class="pv-line hl"></div><div class="pv-line"></div><div class="pv-line short"></div><div class="pv-line"></div>
+              </div>
+            </div>
+          </div>
+          <div class="pv-ui"><span class="rec"></span><span class="bar"></span><span class="pl"></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PILARES ============ -->
+<section>
+  <div class="wrap">
+    <div class="pillars">
+      <div class="pillar rv"><div class="ic">⚡</div><h3>Pronto em segundos</h3><p>Nada de digitar o roteiro de novo. Um link do Google Docs e o app separa tudo em roteiros prontos para ler.</p></div>
+      <div class="pillar rv"><div class="ic">💾</div><h3>Grave sem travar</h3><p>Texto, câmera e gravação em uma tela só. Ajuste velocidade e tamanho, dê o play e grave roteiro por roteiro.</p></div>
+      <div class="pillar rv"><div class="ic">🔒</div><h3>Dados no seu bolso</h3><p>Não precisa de conta, não envia nada para servidor. Roteiros e gravações vivem no seu aparelho.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RECURSOS ============ -->
+<section id="recursos">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="kicker">Recursos</div>
+      <h2>Tudo que um criador precisa na hora de gravar</h2>
+      <p>Feito para quem faz vídeos com roteiro — criadores, vendedores, professores, pregadores e quem mais quiser gravar sem decoreba.</p>
+    </div>
+    <div class="feats">
+      <div class="feat rv"><div class="fi">🔗</div><h3>Link do Google Docs</h3><p>Cole o link do documento e o app separa seus roteiros automaticamente.</p></div>
+      <div class="feat rv"><div class="fi">🐌</div><h3>Velocidade ajustável</h3><p>Controle a rolagem do texto no ritmo da sua fala, com um slider simples.</p></div>
+      <div class="feat rv"><div class="fi">📹</div><h3>Câmera + texto juntos</h3><p>O texto rola sobre a câmera e você lê olhando direto para a lente.</p></div>
+      <div class="feat rv"><div class="fi">🎨</div><h3>Filtros de efeito</h3><p>Original, P&amp;B, Sépia, Vintage, Vívido, Suave e Gelo — na prévia e no vídeo final.</p></div>
+      <div class="feat rv"><div class="fi">🎙️</div><h3>Isolamento de voz</h3><p>O barulho de fundo some e entra apenas a sua voz, mesmo sem fone.</p></div>
+      <div class="feat rv"><div class="fi">➗</div><h3>Grave por roteiro</h3><p>Um takes por roteiro, com prévia e regravação. Continuidade de um vídeo para o outro.</p></div>
+      <div class="feat rv"><div class="fi">🖨️</div><h3>Texto no vídeo</h3><p>Exiba o texto em camada separada e capture legendas ou destaques na gravação.</p></div>
+      <div class="feat rv"><div class="fi">☁️</div><h3>Backup no Google Fotos</h3><p>Escolha a pasta ao salvar (Câmera/DCIM ou Pictures) e o vídeo entra no backup automático.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ COMO FUNCIONA ============ -->
+<section id="como-funciona">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="kicker">Como funciona</div>
+      <h2>Do roteiro ao vídeo em 3 passos</h2>
+    </div>
+    <div class="steps">
+      <div class="step rv"><div class="num">1</div><h3>Cole o link do Docs</h3><p>Abra o app, cole o link do Google Docs com seus roteiros e carregue. O app lê e organiza tudo.</p></div>
+      <div class="step rv"><div class="num">2</div><h3>Ajuste e role</h3><p>Escolha a velocidade e o tamanho do texto. Toque em Rolar e leia acompanhando o movimento.</p></div>
+      <div class="step rv"><div class="num">3</div><h3>Grave e salve</h3><p>Grave olhando para a câmera, revise na prévia e salve na pasta que preferir — com backup automático.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ INSTALAR ============ -->
+<section id="instalar">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="kicker">Instalar</div>
+      <h2>Instale como app no seu celular</h2>
+      <p>O TelePrompT é um PWA: instala igual app nativo, aparece como ícone na tela inicial e abre em tela cheia. Sem loja, sem cadastro.</p>
+    </div>
+    <div class="install-panel rv">
+      <div class="tabs">
+        <button class="tab active" data-tab="android">🤖 Android</button>
+        <button class="tab" data-tab="ios">🍎 iPhone / iPad</button>
+        <button class="tab" data-tab="desktop">💻 Desktop</button>
+      </div>
+      <div class="tabpane active" data-pane="android">
+        <ol>
+          <li>Toque em <b>Instalar no celular</b> abaixo — o app abre no navegador.</li>
+          <li>No Chrome, toque nos <b>⋮ (três pontinhos)</b> → <b>Adicionar à tela inicial</b> (ou "Instalar app").</li>
+          <li>Siga a confirmação. Pronto: o ícone do TelePrompT aparece na tela inicial.</li>
+        </ol>
+        <div class="note-box">💡 Dica: na primeira vez, o próprio navegador costuma oferecer o botão "Instalar" na barra.</div>
+      </div>
+      <div class="tabpane" data-pane="ios">
+        <ol>
+          <li>Toque em <b>Instalar no celular</b> abaixo — o app abre no Safari.</li>
+          <li>Toque em <b>Compartilhar</b> <span style="font-size: .9rem;">⬆️</span> na barra inferior do Safari.</li>
+          <li>Escolha <b>Adicionar à Tela de Início</b> → <b>Adicionar</b>.</li>
+        </ol>
+        <div class="note-box">💡 O iPhone só instala pelo botão Compartilhar do Safari. Em outro navegador não é possível.</div>
+      </div>
+      <div class="tabpane" data-pane="desktop">
+        <ol>
+          <li>Abra <b>Instalar no celular</b> no Chrome ou Edge.</li>
+          <li>Clique no ícone <b>Instalar</b> (computador ⬇️) da barra de endereço.</li>
+          <li>Confirme e o app abre em janela própria, como um aplicativo.</li>
+        </ol>
+      </div>
+      <div style="margin-top: 24px; text-align: center;">
+        <a class="btn btn-primary" href="https://sidney20.github.io/teleprompt/">★ Instalar no celular</a>
+        <p style="color: var(--muted); font-size: .85rem; margin-top: 12px;">Depois de instalado, use sem internet. Atualizações chegam sozinhas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BENEFÍCIOS ============ -->
+<section>
+  <div class="wrap bene rv">
+    <div><div class="bi">🎯</div><b>Sem decoreba</b><span>Leia na hora, natural</span></div>
+    <div><div class="bi">⏱️</div><b>Menos cortes</b><span>Grave takes fluidos</span></div>
+    <div><div class="bi">📱</div><b>No seu bolso</b><span>Onde precisar</span></div>
+    <div><div class="bi">🙌</div><b>Look de TV</b><span>Apresente de verdade</span></div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="kicker">Dúvidas</div>
+      <h2>Perguntas frequentes</h2>
+    </div>
+    <div class="faq rv">
+      <details open>
+        <summary>Precisa pagar ou criar conta?</summary>
+        <div class="body">Não. O TelePrompT é 100% gratuito e não pede cadastro. Tudo roda no seu navegador e os seus dados ficam no seu aparelho.</div>
+      </details>
+      <details>
+        <summary>Funciona sem internet?</summary>
+        <div class="body">Sim. Depois de instalado, o app funciona offline — inclusive o carregamento de roteiros já salvos. Você só precisa de internet para ler um documento novo do Google Docs.</div>
+      </details>
+      <details>
+        <summary>Que formato de vídeo eu recebo?</summary>
+        <div class="body">O app grava com o formato suportado pelo seu navegador (geralmente WebM no Android, MP4 no desktop). Na hora de salvar, você escolhe a pasta — como Câmera/DCIM ou Pictures — para o Google Fotos fazer o backup automático.</div>
+      </details>
+      <details>
+        <summary>Para quem é esse app?</summary>
+        <div class="body">Para qualquer pessoa que grave vídeos com roteiro: criadores de conteúdo, vendedores, professores, palestrantes, apresentadores, pregadores... Se você quer falar olhando para a câmera sem esquecer nada, ele é seu.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA FINAL ============ -->
+<section>
+  <div class="wrap final-cta">
+    <div class="final-card rv">
+      <h2>Pare de decorar. Comece a gravar.</h2>
+      <p>Instale o TelePrompT no seu celular e faça o próximo vídeo com a segurança de quem lê o roteiro sem tirar os olhos da câmera.</p>
+      <a class="btn btn-primary" href="https://sidney20.github.io/teleprompt/">★ Instalar no celular</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <div class="brand"><div class="mark">🎬</div> TelePrompT</div>
+    <p>Grátis para sempre &middot; Teleprompter PWA em português &middot; Feito com 💜</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var $ = function (s, c) { return (c || document).querySelector(s); };
+  var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
+
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  $$('.rv').forEach(function (el) { io.observe(el); });
+
+  $$('.tab').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var name = btn.getAttribute('data-tab');
+      $$('.tab').forEach(function (t) { t.classList.toggle('active', t === btn); });
+      $$('.tabpane').forEach(function (p) { p.classList.toggle('active', p.getAttribute('data-pane') === name); });
+    });
+  });
+})();
+</script>
+</body>
+</html>
