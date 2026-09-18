@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>TelePrompT — Seu teleprompter no bolso</title>
-<meta name="description" content="TelePrompT: leia seus roteiros do Google Docs enquanto grava vídeo direto no celular. Grátis, funciona offline e instala como app. Escolha a pasta e o Google Fotos faz o backup.">
+<meta name="description" content="TelePrompT: leia seus roteiros do Google Docs enquanto grava vídeo direto no celular. Planos a partir de R$0, funciona offline e instala como app.">
 <meta name="theme-color" content="#0f0c29">
 <meta property="og:title" content="TelePrompT — Seu teleprompter no bolso">
-<meta property="og:description" content="Cole o link do Google Docs, ajuste a velocidade e grave vídeos com texto na tela. Grátis, offline, privado. Instala como app no seu celular.">
+<meta property="og:description" content="Cole o link do Google Docs, ajuste a velocidade e grave vídeos com texto na tela. Offline, privado. Planos a partir de R$0.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://sidney20.github.io/teleprompt-site/">
 <meta property="og:image" content="https://sidney20.github.io/teleprompt/icons/icon-512.png">
@@ -248,6 +248,30 @@
     border-radius: 12px; padding: 11px 14px; font-size: .85rem; margin-top: 6px;
   }
 
+  /* pricing */
+  .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; max-width: 960px; margin: 0 auto; }
+  .price-card {
+    background: var(--glass); border: 1px solid var(--line); border-radius: 20px; padding: 28px 22px;
+    text-align: center; position: relative; transition: transform .2s ease, border-color .2s ease;
+  }
+  .price-card:hover { transform: translateY(-4px); border-color: rgba(167,139,250,.35); }
+  .price-card.featured {
+    border-color: var(--p1); background: linear-gradient(150deg, rgba(99,102,241,.15), rgba(139,92,246,.08));
+    box-shadow: 0 8px 30px rgba(99,102,241,.25);
+  }
+  .price-badge {
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--p1), var(--p2)); color: #fff;
+    font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .5px;
+    padding: 4px 14px; border-radius: 999px; white-space: nowrap;
+  }
+  .price-name { font-size: 1.1rem; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+  .price-value { font-size: 2.2rem; font-weight: 900; background: linear-gradient(135deg, var(--p1), var(--p2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .price-period { font-size: .82rem; color: var(--muted); margin-bottom: 18px; }
+  .price-features { list-style: none; padding: 0; margin: 0 0 20px 0; text-align: left; }
+  .price-features li { font-size: .88rem; color: var(--ink); padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,.06); display: flex; align-items: center; gap: 8px; }
+  .price-features li::before { content: "✓"; color: var(--p3); font-weight: 700; font-size: .8rem; }
+
   /* benefits strip */
   .bene { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; }
   .bene > div { text-align: center; padding: 8px 6px; }
@@ -322,7 +346,7 @@
 <section class="hero">
   <div class="wrap hero-grid">
     <div>
-      <span class="eyebrow">Grátis &middot; Funciona offline &middot; Instala como app</span>
+      <span class="eyebrow">Planos a partir de R$0 &middot; Funciona offline &middot; Instala como app</span>
       <h1>Seu <span class="grad">teleprompter</span> no bolso, pronto pra gravar.</h1>
       <p class="lead">Cole o link do seu roteiro no Google Docs, ajuste a velocidade e grave vídeos olhando para a câmera — com o texto rolando na tela, como um apresentador profissional de TV.</p>
       <div class="cta-row">
@@ -331,7 +355,7 @@
       </div>
       <p class="hero-note">No Android, instale pelo APK (mais fácil) ou pelo navegador. No iPhone, use Compartilhar → Adicionar à Tela de Início.</p>
       <div class="hero-stats">
-        <div class="s"><b>100%</b><span>grátis, sem limites</span></div>
+        <div class="s"><b>R$0</b><span>teste com 3 roteiros</span></div>
         <div class="s"><b>Offline</b><span>funciona sem internet</span></div>
         <div class="s"><b>Privado</b><span>seus roteiros ficam no aparelho</span></div>
       </div>
@@ -481,6 +505,67 @@
   </div>
 </section>
 
+<!-- ============ PLANOS ============ -->
+<section id="planos">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="kicker">Planos</div>
+      <h2>Escolha o plano certo pra você</h2>
+      <p>Comece grátis com 3 roteiros. Depois, escolha o plano que mais se encaixa no seu ritmo.</p>
+    </div>
+    <div class="pricing-grid rv">
+      <div class="price-card">
+        <div class="price-name">Teste</div>
+        <div class="price-value">R$0</div>
+        <div class="price-period">para sempre</div>
+        <ul class="price-features">
+          <li>3 roteiros por mês</li>
+          <li>Gravação de vídeo</li>
+          <li>Isolamento de voz</li>
+          <li>Filtro de beleza</li>
+          <li>Funciona offline</li>
+        </ul>
+        <a class="btn btn-ghost" href="https://sidney20.github.io/teleprompt/" style="width: 100%; text-align: center;">Começar grátis</a>
+      </div>
+      <div class="price-card">
+        <div class="price-name">Semanal</div>
+        <div class="price-value">R$4,90</div>
+        <div class="price-period">por semana</div>
+        <ul class="price-features">
+          <li>210 roteiros por semana</li>
+          <li>Tudo do plano Teste</li>
+          <li>Grave à vontade</li>
+        </ul>
+        <a class="btn btn-ghost" href="https://sidney20.github.io/teleprompt/" style="width: 100%; text-align: center;">Assinar</a>
+      </div>
+      <div class="price-card featured">
+        <div class="price-badge">Mais popular</div>
+        <div class="price-name">Criador</div>
+        <div class="price-value">R$14,90</div>
+        <div class="price-period">por mês</div>
+        <ul class="price-features">
+          <li>600 roteiros por mês</li>
+          <li>Tudo do plano Semanal</li>
+          <li>Ideal para criadores de conteúdo</li>
+        </ul>
+        <a class="btn btn-primary" href="https://sidney20.github.io/teleprompt/" style="width: 100%; text-align: center;">Assinar</a>
+      </div>
+      <div class="price-card">
+        <div class="price-name">Profissional</div>
+        <div class="price-value">R$29,90</div>
+        <div class="price-period">por mês</div>
+        <ul class="price-features">
+          <li>1.500 roteiros por mês</li>
+          <li>Tudo do plano Criador</li>
+          <li>Para equipes e produtoras</li>
+        </ul>
+        <a class="btn btn-ghost" href="https://sidney20.github.io/teleprompt/" style="width: 100%; text-align: center;">Assinar</a>
+      </div>
+    </div>
+    <p style="text-align: center; color: var(--muted); font-size: .85rem; margin-top: 20px;">Pagamento via Pix. Sem assinatura recorrente — pague e use.</p>
+  </div>
+</section>
+
 <!-- ============ FAQ ============ -->
 <section id="faq">
   <div class="wrap">
@@ -491,7 +576,7 @@
     <div class="faq rv">
       <details open>
         <summary>Precisa pagar ou criar conta?</summary>
-        <div class="body">Não. O TelePrompT é 100% gratuito e não pede cadastro. Tudo roda no seu navegador e os seus dados ficam no seu aparelho.</div>
+        <div class="body">Para começar, não. O plano Teste dá 3 roteiros por mês sem pagar nada. Para gravar mais, tem planos a partir de R$4,90/semana. Pagamento via Pix, sem assinatura recorrente.</div>
       </details>
       <details>
         <summary>Funciona sem internet?</summary>
@@ -499,7 +584,7 @@
       </details>
       <details>
         <summary>Que formato de vídeo eu recebo?</summary>
-        <div class="body">O app grava com o formato suportado pelo seu navegador (geralmente WebM no Android, MP4 no desktop). Na hora de salvar, você escolhe a pasta — como Câmera/DCIM ou Pictures — para o Google Fotos fazer o backup automático.</div>
+        <div class="body">O app grava em MP4 ou WebM, dependendo do que o seu dispositivo suportar. No app nativo (APK), o vídeo é salvo direto na Galeria. No PWA, você escolhe a pasta na hora de salvar.</div>
       </details>
       <details>
         <summary>Para quem é esse app?</summary>
@@ -523,7 +608,7 @@
 <footer>
   <div class="wrap foot">
     <div class="brand"><div class="mark">🎬</div> TelePrompT</div>
-    <p>Grátis para sempre &middot; Teleprompter PWA em português &middot; Feito com 💜</p>
+    <p>Planos a partir de R$0 &middot; Teleprompter PWA em português &middot; Feito com 💜</p>
   </div>
 </footer>
 
