@@ -329,7 +329,7 @@
         <a class="btn btn-primary" href="https://sidney20.github.io/teleprompt/">★ Instalar no celular</a>
         <a class="btn btn-ghost" href="#como-funciona">Ver como funciona</a>
       </div>
-      <p class="hero-note">No Android, o próprio navegador oferece a instalação ao abrir o app. No iPhone, use Compartilhar → Adicionar à Tela de Início.</p>
+      <p class="hero-note">No Android, instale pelo APK (mais fácil) ou pelo navegador. No iPhone, use Compartilhar → Adicionar à Tela de Início.</p>
       <div class="hero-stats">
         <div class="s"><b>100%</b><span>grátis, sem limites</span></div>
         <div class="s"><b>Offline</b><span>funciona sem internet</span></div>
@@ -426,12 +426,25 @@
         <button class="tab" data-tab="desktop">💻 Desktop</button>
       </div>
       <div class="tabpane active" data-pane="android">
-        <ol>
-          <li>Toque em <b>Instalar no celular</b> abaixo — o app abre no navegador.</li>
-          <li>No Chrome, toque nos <b>⋮ (três pontinhos)</b> → <b>Adicionar à tela inicial</b> (ou "Instalar app").</li>
-          <li>Siga a confirmação. Pronto: o ícone do TelePrompT aparece na tela inicial.</li>
-        </ol>
-        <div class="note-box">💡 Dica: na primeira vez, o próprio navegador costuma oferecer o botão "Instalar" na barra.</div>
+        <div style="margin-bottom: 20px;">
+          <div style="font-size: 1rem; font-weight: 700; color: #a78bfa; margin-bottom: 8px;">📱 Opção 1: App nativo (mais fácil)</div>
+          <ol>
+            <li>Toque em <b>Baixar APK</b> abaixo.</li>
+            <li>Quando o download terminar, toque no arquivo <b>app-debug.apk</b>.</li>
+            <li>Se pedir, ative <b>Fontes desconhecidas</b> nas configurações.</li>
+            <li>Toque em <b>Instalar</b>. Pronto: o ícone aparece na tela inicial.</li>
+          </ol>
+          <div class="note-box">💡 O app nativo salva vídeos direto na Galeria/Fotos do celular.</div>
+        </div>
+        <div style="margin-bottom: 20px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.1);">
+          <div style="font-size: 1rem; font-weight: 700; color: #a78bfa; margin-bottom: 8px;">🌐 Opção 2: PWA (pelo navegador)</div>
+          <ol>
+            <li>Toque em <b>Instalar no celular</b> abaixo — o app abre no navegador.</li>
+            <li>No Chrome, toque nos <b>⋮ (três pontinhos)</b> → <b>Adicionar à tela inicial</b> (ou "Instalar app").</li>
+            <li>Siga a confirmação. Pronto: o ícone do TelePrompT aparece na tela inicial.</li>
+          </ol>
+          <div class="note-box">💡 Dica: na primeira vez, o próprio navegador costuma oferecer o botão "Instalar" na barra.</div>
+        </div>
       </div>
       <div class="tabpane" data-pane="ios">
         <ol>
@@ -449,7 +462,9 @@
         </ol>
       </div>
       <div style="margin-top: 24px; text-align: center;">
-        <a class="btn btn-primary" href="https://sidney20.github.io/teleprompt/">★ Instalar no celular</a>
+        <a class="btn btn-primary" href="https://sidney20.github.io/teleprompt/" style="margin-bottom: 10px;">★ Instalar no celular</a>
+        <br>
+        <a class="btn" href="https://github.com/sidney20/teleprompt/releases/download/v1.0/app-debug.apk" style="background: rgba(255,255,255,.1); color: #fff; border: 1px solid rgba(255,255,255,.2);">⬇ Baixar APK (Android)</a>
         <p style="color: var(--muted); font-size: .85rem; margin-top: 12px;">Depois de instalado, use sem internet. Atualizações chegam sozinhas.</p>
       </div>
     </div>
